@@ -1,17 +1,30 @@
-"use client";
-
+import { useState } from "react";
 import { Project } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, CheckCircle2, TrendingUp, DollarSign } from "lucide-react";
+import { AlertCircle, CheckCircle2, TrendingUp, DollarSign, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { BudgetCategoryDetail } from "./BudgetCategoryDetail";
 
 export function BudgetView({ project }: { project: Project }) {
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+
     const percentTotal = (project.spent / project.budget) * 100;
     const remaining = project.budget - project.spent;
+
+    const selectedCategory = project.budgetBreakdown.find(c => c.id === selectedCategoryId);
+
+    if (selectedCategory) {
+        return (
+            <BudgetCategoryDetail
+                category={selectedCategory}
+                onBack={() => setSelectedCategoryId(null)}
+            />
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -67,10 +80,17 @@ export function BudgetView({ project }: { project: Project }) {
                         {project.budgetBreakdown.map((item, index) => {
                             const percent = (item.spent / item.allocated) * 100;
                             return (
-                                <div key={index} className="space-y-2">
+                                <div
+                                    key={index}
+                                    className="space-y-2 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 p-2 rounded-lg transition-colors group"
+                                    onClick={() => setSelectedCategoryId(item.id)}
+                                >
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-0.5">
-                                            <div className="font-medium text-sm">{item.category}</div>
+                                            <div className="font-medium text-sm flex items-center gap-2">
+                                                {item.category}
+                                                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </div>
                                             <div className="text-xs text-muted-foreground">
                                                 ${item.spent.toLocaleString()} spent of ${item.allocated.toLocaleString()}
                                             </div>
