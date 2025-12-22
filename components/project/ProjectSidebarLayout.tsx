@@ -6,6 +6,7 @@ import { Project } from "@/lib/mock-data";
 import { RoadmapView } from "@/components/roadmap/RoadmapView";
 import { ProFormaView } from "@/components/proforma/ProFormaView";
 import { BudgetView } from "@/components/budget/BudgetView";
+import { DocumentsView } from "@/components/documents/DocumentsView";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -138,11 +139,7 @@ export function ProjectSidebarLayout({ project }: ProjectSidebarLayoutProps) {
                     )}
 
                     {activeTab === 'docs' && (
-                        <div className="p-10 border border-dashed rounded-lg text-center text-muted-foreground">
-                            <FileText className="h-10 w-10 mx-auto mb-4 opacity-50" />
-                            <h3 className="text-lg font-medium">Documents Store Coming Soon</h3>
-                            <p>Upload and manage permits, contracts, and drawings.</p>
-                        </div>
+                        <DocumentsView project={project} />
                     )}
 
                     {activeTab === 'team' && (

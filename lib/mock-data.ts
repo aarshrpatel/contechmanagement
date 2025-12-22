@@ -22,6 +22,16 @@ export interface BudgetLineItem {
     invoices: Invoice[];
 }
 
+export interface ProjectDocument {
+    id: string;
+    name: string;
+    type: "PDF" | "DWG" | "Image" | "Excel";
+    category: "Contracts" | "Permits" | "Drawings" | "Financials";
+    size: string;
+    date: string;
+    stepId?: string; // Links to roadmap step
+}
+
 export interface Project {
     id: string;
     name: string;
@@ -33,13 +43,14 @@ export interface Project {
     completionDate: string;
     image: string;
     budgetBreakdown: {
-        id: string; // added ID for selection
+        id: string;
         category: string;
         allocated: number;
         spent: number;
         status: "on-track" | "at-risk" | "over-budget";
-        items: BudgetLineItem[]; // Nested items
+        items: BudgetLineItem[];
     }[];
+    documents: ProjectDocument[];
 }
 
 export const PROJECTS: Project[] = [
@@ -53,6 +64,12 @@ export const PROJECTS: Project[] = [
         startDate: "2024-01-15",
         completionDate: "2025-08-01",
         image: "https://images.unsplash.com/photo-1519999482648-25049ddd37b1?q=80&w=2626&auto=format&fit=crop",
+        documents: [
+            { id: "d1", name: "Purchase Agreement_Final.pdf", type: "PDF", category: "Contracts", size: "2.4 MB", date: "2024-01-10", stepId: "psa" },
+            { id: "d2", name: "Phase 1 Environmental.pdf", type: "PDF", category: "Permits", size: "15.0 MB", date: "2023-12-15", stepId: "dd_env" },
+            { id: "d3", name: "Site Plan V3.dwg", type: "DWG", category: "Drawings", size: "4.2 MB", date: "2024-02-01", stepId: "concept" },
+            { id: "d4", name: "Pro Forma Mode.xlsx", type: "Excel", category: "Financials", size: "1.2 MB", date: "2024-01-20" },
+        ],
         budgetBreakdown: [
             {
                 id: "land",
@@ -138,6 +155,7 @@ export const PROJECTS: Project[] = [
                 status: "on-track",
                 items: []
             }
-        ]
+        ],
+        documents: []
     },
 ];

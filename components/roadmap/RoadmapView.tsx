@@ -4,7 +4,7 @@ import { Project } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, Circle, Clock, AlertCircle, ChevronDown, ChevronRight } from "lucide-react";
+import { CheckCircle2, Circle, Clock, AlertCircle, ChevronDown, ChevronRight, FileText } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -97,14 +97,14 @@ export function RoadmapView({ project }: { project: Project }) {
 
             <div className="grid gap-4">
                 {LIFECYCLE_DATA.map((phase) => (
-                    <PhaseItem key={phase.id} phase={phase} currentProjectPhase={project.phase} />
+                    <PhaseItem key={phase.id} phase={phase} project={project} />
                 ))}
             </div>
         </div>
     );
 }
 
-function PhaseItem({ phase, currentProjectPhase }: { phase: LifecyclePhase, currentProjectPhase: string }) {
+function PhaseItem({ phase, project }: { phase: LifecyclePhase, project: Project }) {
     const [isOpen, setIsOpen] = useState(true);
 
     // Simple mock logic for expanded state visualization
@@ -139,13 +139,16 @@ function PhaseItem({ phase, currentProjectPhase }: { phase: LifecyclePhase, curr
                 </div>
             </div>
 
-            {isOpen && (
-                <CardContent className="border-t pt-4 bg-zinc-50/50 dark:bg-zinc-900/30">
-                    <div className="space-y-3 pl-8 border-l-2 border-zinc-200 ml-2">
-                        {phase.steps.map((step) => (
-                            <div key={step.id} className="relative flex items-center justify-between group">
+            <CardContent className="border-t pt-4 bg-zinc-50/50 dark:bg-zinc-900/30">
+                <div className="space-y-6 pl-8 border-l-2 border-zinc-200 ml-2">
+                    {phase.steps.map((step) => {
+                        // Find linked docs
+                        const stepDocs = project.documents.filter(d => d.stepId === step.id);
+
+                        return (
+                            <div key={step.id} className="relative group">
                                 {/* Timeline Connector Dot */}
-                                <div className="absolute -left-[39px] bg-white dark:bg-zinc-950 p-1 rounded-full border border-zinc-200 dark:border-zinc-800">
+                                <div className="absolute -left-[39px] top-0 bg-white dark:bg-zinc-950 p-1 rounded-full border border-zinc-200 dark:border-zinc-800">
                                     {step.status === 'completed' ? (
                                         <CheckCircle2 className="h-4 w-4 text-green-500" />
                                     ) : step.status === 'in-progress' ? (
@@ -155,22 +158,35 @@ function PhaseItem({ phase, currentProjectPhase }: { phase: LifecyclePhase, curr
                                     )}
                                 </div>
 
-                                <div className="flex items-center gap-3">
-                                    <span className={cn(
-                                        "text-sm font-medium",
-                                        step.status === 'completed' && "text-zinc-500 line-through",
-                                        step.status === 'in-progress' && "text-blue-700 dark:text-blue-300"
-                                    )}>
-                                        {step.title}
-                                    </span>
+                                <div className="mb-2 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <span className={cn(
+                                            "text-sm font-medium",
+                                            step.status === 'completed' && "text-zinc-500 line-through",
+                                            step.status === 'in-progress' && "text-blue-700 dark:text-blue-300"
+                                        )}>
+                                            {step.title}
+                                        </span>
+                                    </div>
+                                    {step.status === 'in-progress' && <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-0">Active</Badge>}
                                 </div>
 
-                                {step.status === 'in-progress' && <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-0">Active</Badge>}
+                                {/* Linked Documents */}
+                                {stepDocs.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mb-2">
+                                        {stepDocs.map(doc => (
+                                            <Badge key={doc.id} variant="outline" className="pl-1 pr-2 py-1 h-auto gap-1 text-xs cursor-pointer hover:bg-zinc-100 text-muted-foreground">
+                                                <FileText className="h-3 w-3" />
+                                                {doc.name}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
-                        ))}
-                    </div>
-                </CardContent>
-            )}
+                        );
+                    })}
+                </div>
+            </CardContent>
         </Card>
     )
 }
