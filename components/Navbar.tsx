@@ -12,14 +12,8 @@ export function Navbar() {
           <span>ConTech Manager</span>
         </Link>
         <nav className="flex items-center gap-4">
-          <Link href="/" className="text-sm font-medium hover:underline">
-            Dashboard
-          </Link>
-          <Link href="/projects" className="text-sm font-medium hover:underline">
-            Projects
-          </Link>
           <div className="h-6 w-px bg-zinc-200 dark:bg-zinc-800" />
-          <form action={logout}>
+          <form action={logout} >
             <Button variant="ghost" size="sm">
               Log out
             </Button>
