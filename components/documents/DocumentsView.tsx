@@ -1,12 +1,38 @@
 "use client";
 
+import { useState } from "react";
 import { Project } from "@/lib/mock-data";
+import { uploadDocument } from "@/lib/actions/documents";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Download, Upload, File, Image as ImageIcon, FileSpreadsheet } from "lucide-react";
 
 export function DocumentsView({ project }: { project: Project }) {
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        setIsUploading(true);
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("category", "Contracts"); // Default for now, could be a selector
+        formData.append("type", file.name.split('.').pop()?.toUpperCase() || "FILE");
+
+        try {
+            await uploadDocument(project.id, formData);
+            // Revalidation happens on server, page should refresh
+        } catch (error) {
+            console.error("Upload failed", error);
+            alert("Upload failed");
+        } finally {
+            setIsUploading(false);
+            // Reset input
+            e.target.value = '';
+        }
+    };
 
     // Helper for file icons
     const getFileIcon = (type: string) => {
@@ -26,9 +52,24 @@ export function DocumentsView({ project }: { project: Project }) {
                     <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Project Documents</h2>
                     <p className="text-muted-foreground">Central repository for all project files.</p>
                 </div>
-                <Button>
-                    <Upload className="h-4 w-4 mr-2" /> Upload Document
-                </Button>
+                <div className="flex items-center gap-2">
+                    {isUploading && <span className="text-sm text-muted-foreground animate-pulse">Uploading...</span>}
+                    <div className="relative">
+                        <input
+                            type="file"
+                            id="file-upload"
+                            className="hidden"
+                            onChange={handleUpload}
+                            disabled={isUploading}
+                        />
+                        <Button asChild disabled={isUploading}>
+                            <label htmlFor="file-upload" className="cursor-pointer">
+                                <Upload className="h-4 w-4 mr-2" />
+                                Upload Document
+                            </label>
+                        </Button>
+                    </div>
+                </div>
             </div>
 
             <Card>
@@ -40,7 +81,9 @@ export function DocumentsView({ project }: { project: Project }) {
                         <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
                             <Upload className="h-10 w-10 mx-auto mb-4 opacity-20" />
                             <p>No documents uploaded yet.</p>
-                            <Button variant="link" className="mt-2 text-orange-600">Upload your first file</Button>
+                            <label htmlFor="file-upload" className="mt-2 inline-block text-orange-600 hover:text-orange-700 cursor-pointer font-medium">
+                                Upload your first file
+                            </label>
                         </div>
                     ) : (
                         <div className="rounded-md border">

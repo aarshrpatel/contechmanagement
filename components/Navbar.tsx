@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Building2, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { logout } from "@/lib/actions/auth";
 
 export function Navbar() {
   return (
@@ -18,10 +19,11 @@ export function Navbar() {
             Projects
           </Link>
           <div className="h-6 w-px bg-zinc-200 dark:bg-zinc-800" />
-          <Button variant="ghost" size="icon">
-            <UserCircle className="h-5 w-5" />
-            <span className="sr-only">User</span>
-          </Button>
+          <form action={logout}>
+            <Button variant="ghost" size="sm">
+              Log out
+            </Button>
+          </form>
         </nav>
       </div>
     </header>

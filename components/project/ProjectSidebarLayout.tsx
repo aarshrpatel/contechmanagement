@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Project } from "@/lib/mock-data";
+import { logout } from "@/lib/actions/auth";
 import { RoadmapView } from "@/components/roadmap/RoadmapView";
 import { ProFormaView } from "@/components/proforma/ProFormaView";
 import { BudgetView } from "@/components/budget/BudgetView";
@@ -86,9 +87,12 @@ export function ProjectSidebarLayout({ project }: ProjectSidebarLayoutProps) {
                         <Settings className="h-5 w-5" />
                         Settings
                     </button>
-                    <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-orange-100 hover:bg-orange-500/50 transition-colors">
-                        <UserCircle className="h-5 w-5" />
-                        My Profile
+                    <button
+                        onClick={() => logout()}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-orange-100 hover:bg-orange-500/50 transition-colors"
+                    >
+                        <LogOut className="h-5 w-5" />
+                        Logout
                     </button>
                 </div>
             </aside>
