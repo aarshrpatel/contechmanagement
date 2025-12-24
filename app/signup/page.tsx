@@ -8,10 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useActionState } from 'react'
 
-const initialState = {
-    error: '',
-    success: '',
-}
+const initialState: { error?: string; success?: string; } = {}
 
 export default function SignupPage() {
     const [state, formAction, isPending] = useActionState(signup, initialState)
